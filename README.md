@@ -7,7 +7,7 @@ Usage:
     var jsTplReplace = require('stc-js-tpl-replace');
 
     stc.workflow({
-    jsTplReplace: {plugin: jsTplReplace, include: [/resource\/js/, /tpls\//]}
+        jsTplReplace: {plugin: jsTplReplace}
     });
 ```
 
