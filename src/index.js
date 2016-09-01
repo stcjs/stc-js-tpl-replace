@@ -25,11 +25,7 @@ export default class jsTplReplace extends Plugin {
     let promises = tokens.map(token => {
       let start = token.ext.start;
       let content = token.ext.content;
-      if(this.file.path.match(/a\.tpl/)) {
-        console.log(this.file.path, token.type === this.TokenType.HTML_TAG_SCRIPT , start.ext.isTpl , !start.ext.isExternal);
-      }
       if(token.type === this.TokenType.HTML_TAG_SCRIPT && start.ext.isTpl && !start.ext.isExternal) {
-      //  console.log(start.value, this.file.path);
         let val = start.value;
         let matchResult = val.match(REG.ID);
         if(matchResult && matchResult[1] && !content.ext.hasTpl) {
@@ -87,6 +83,12 @@ export default class jsTplReplace extends Plugin {
     }
   }
   /**
+   * default include
+   */
+  static include(){
+    return [/\.js$/, {type: 'tpl'}];
+  }
+  /**
    * after handling templates files, 
    * we need to replace strings like `$('#myTplId').html` in js with content collected before,
    * and remove those content in template files.
@@ -106,7 +108,6 @@ export default class jsTplReplace extends Plugin {
           if(match && match[2]) {
             let id = match[2].trim();
             let tplObj = tplMap.get(id);
-            // console.log(id, tplMap);
             if(tplMap.has(id)) {
               let jsTplStr = tplObj.content;
               let tplVarRegExp = '[W$]\\([\'"]#'+id+'[\'"]\\)\\.html\\(\\)';
