@@ -1,20 +1,19 @@
 import Plugin from "stc-plugin";
 import {matchAll} from "./helper";
-
 import {md5} from 'stc-helper';
+
 const REG = {
   ID: /id\s*=\s*['"]([^'">]+)['"]/,
   JS_ID: /([W$]\(['"]#([^'"]+)['"]\)\.html\(\))/
 }
 let tplMap = new Map();
 let sourceTplMap = new Map();
-// 查找js文件中的$('#tplId').html();
-// 根据id 找到对应的tpl模板
-// 提取字符串
-// 给js文件中的变量赋值成字符串
+
 export default class jsTplReplace extends Plugin {
   /** 
-   * 收集模板文件里的模板id和内容
+   * collect script tokens whose `type` is `text/html` or `text/template` by default,
+   * put their content into a global map
+   * we will use it later
   **/
   async run() {
     if(this.isTpl()) {
@@ -88,7 +87,9 @@ export default class jsTplReplace extends Plugin {
     }
   }
   /**
-   * 集中处理js文件，进行字符串替换
+   * after handling templates files, 
+   * we need to replace strings like `$('#myTplId').html` in js with content collected before,
+   * and remove those content in template files.
   **/
   static async after(files, instance) {
    
