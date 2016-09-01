@@ -17,7 +17,7 @@ source js:
 ```
     var str = $('#myTplId').html();
 ```
-source template:
+source template, whose `type` is `text/html` or `text/template` by default:
 ```
     <script type="text/html" id="myTplId">
         <div>
