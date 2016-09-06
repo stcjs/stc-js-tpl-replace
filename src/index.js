@@ -1,5 +1,5 @@
-import Plugin from "stc-plugin";
-import {matchAll} from "./helper";
+import Plugin from 'stc-plugin';
+import {matchAll} from './helper';
 import {md5} from 'stc-helper';
 
 const REG = {
@@ -101,7 +101,7 @@ export default class jsTplReplace extends Plugin {
       if(!file.path.match(REG_JS_SUFFIX)) {
         continue;
       }
-      
+
       let content = await file.getContent('utf8');
       let arr = matchAll(content, REG.JS_ID);
      
