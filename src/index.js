@@ -4,11 +4,11 @@ import {md5} from 'stc-helper';
 
 const REG = {
   ID: /id\s*=\s*['"]([^'">]+)['"]/,
-  JS_ID: /([W$]\(['"]#([^'"]+)['"]\)\.html\(\))/
+  JS_ID: /([W$]\(['"]#([^'"]+)['"]\)\.html\(\))/,
+  JS_SUFFIX: /\.js$/
 }
 let tplMap = new Map();
 let sourceTplMap = new Map();
-
 export default class jsTplReplace extends Plugin {
   /** 
    * collect script tokens whose `type` is `text/html` or `text/template` by default,
@@ -30,7 +30,6 @@ export default class jsTplReplace extends Plugin {
         let matchResult = val.match(REG.ID);
         if(matchResult && matchResult[1] && !content.ext.hasTpl) {
           let id = matchResult[1].trim();
-          
           if(tplMap.has(id)) {
             let existedMd5 = md5(tplMap.get(id).content.trim());
             let curMd5 = md5(content.value.trim());
@@ -62,7 +61,7 @@ export default class jsTplReplace extends Plugin {
       let curToken = tokens[index];
       let start = curToken.ext.start;
       let content = curToken.ext.content;
-      //比较id
+      //compare id in js and that in template
       if(curToken.type === this.TokenType.HTML_TAG_SCRIPT && start.ext.isTpl && !start.ext.isExternal) {
         let val = start.value;
         let matchResult = val.match(REG.ID);
@@ -97,8 +96,13 @@ export default class jsTplReplace extends Plugin {
    
     for(let index in files) {
       let file = files[index];
-      let content = await file.getContent('utf8');
+      // only replace string in js file
+      let REG_JS_SUFFIX = instance.options.JS_SUFFIX || REG.JS_SUFFIX;
+      if(!file.path.match(REG_JS_SUFFIX)) {
+        continue;
+      }
       
+      let content = await file.getContent('utf8');
       let arr = matchAll(content, REG.JS_ID);
      
       if(arr.length) {
